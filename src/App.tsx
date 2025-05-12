@@ -13,6 +13,11 @@ import Login from "./pages/Login";
 import StudentDashboard from "./pages/student/Dashboard";
 import InternshipSubmission from "./pages/student/InternshipSubmission";
 import Assessments from "./pages/student/Assessments";
+import Status from "./pages/student/Status";
+import Messages from "./pages/student/Messages";
+import History from "./pages/student/History";
+import CareerGuidance from "./pages/student/CareerGuidance";
+import Workshops from "./pages/student/Workshops";
 
 // SCAD
 import ScadDashboard from "./pages/scad/Dashboard";
@@ -20,6 +25,8 @@ import SubmissionCycles from "./pages/scad/SubmissionCycles";
 
 // Faculty
 import PendingReviews from "./pages/faculty/PendingReviews";
+import ApprovedInternships from "./pages/faculty/ApprovedInternships";
+import RejectedInternships from "./pages/faculty/RejectedInternships";
 
 const queryClient = new QueryClient();
 
@@ -39,7 +46,12 @@ const App = () => (
           {/* Student Routes */}
           <Route path="/student" element={<StudentDashboard />} />
           <Route path="/student/submission" element={<InternshipSubmission />} />
+          <Route path="/student/status" element={<Status />} />
+          <Route path="/student/messages" element={<Messages />} />
+          <Route path="/student/history" element={<History />} />
           <Route path="/student/assessments" element={<Assessments />} />
+          <Route path="/student/career-guidance" element={<CareerGuidance />} />
+          <Route path="/student/workshops" element={<Workshops />} />
           
           {/* SCAD Routes */}
           <Route path="/scad" element={<ScadDashboard />} />
@@ -48,6 +60,8 @@ const App = () => (
           {/* Faculty Routes */}
           <Route path="/faculty" element={<Navigate to="/faculty/pending" replace />} />
           <Route path="/faculty/pending" element={<PendingReviews />} />
+          <Route path="/faculty/approved" element={<ApprovedInternships />} />
+          <Route path="/faculty/rejected" element={<RejectedInternships />} />
           
           {/* 404 Route */}
           <Route path="*" element={<NotFound />} />
