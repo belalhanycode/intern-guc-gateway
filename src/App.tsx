@@ -25,7 +25,7 @@ import SubmissionCycles from "./pages/scad/SubmissionCycles";
 import Submissions from "./pages/scad/Submissions";
 import Students from "./pages/scad/Students";
 import Companies from "./pages/scad/Companies";
-import Messages as ScadMessages from "./pages/scad/Messages";
+import { default as ScadMessages } from "./pages/scad/Messages";
 import Analytics from "./pages/scad/Analytics";
 import FacultyAssignment from "./pages/scad/FacultyAssignment";
 
