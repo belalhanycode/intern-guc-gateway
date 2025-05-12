@@ -22,6 +22,12 @@ import Workshops from "./pages/student/Workshops";
 // SCAD
 import ScadDashboard from "./pages/scad/Dashboard";
 import SubmissionCycles from "./pages/scad/SubmissionCycles";
+import Submissions from "./pages/scad/Submissions";
+import Students from "./pages/scad/Students";
+import Companies from "./pages/scad/Companies";
+import Messages as ScadMessages from "./pages/scad/Messages";
+import Analytics from "./pages/scad/Analytics";
+import FacultyAssignment from "./pages/scad/FacultyAssignment";
 
 // Faculty
 import PendingReviews from "./pages/faculty/PendingReviews";
@@ -56,6 +62,12 @@ const App = () => (
           {/* SCAD Routes */}
           <Route path="/scad" element={<ScadDashboard />} />
           <Route path="/scad/cycles" element={<SubmissionCycles />} />
+          <Route path="/scad/submissions" element={<Submissions />} />
+          <Route path="/scad/students" element={<Students />} />
+          <Route path="/scad/companies" element={<Companies />} />
+          <Route path="/scad/faculty-assignment" element={<FacultyAssignment />} />
+          <Route path="/scad/analytics" element={<Analytics />} />
+          <Route path="/scad/messages" element={<ScadMessages />} />
           
           {/* Faculty Routes */}
           <Route path="/faculty" element={<Navigate to="/faculty/pending" replace />} />
