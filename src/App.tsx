@@ -33,6 +33,7 @@ import FacultyAssignment from "./pages/scad/FacultyAssignment";
 import PendingReviews from "./pages/faculty/PendingReviews";
 import ApprovedInternships from "./pages/faculty/ApprovedInternships";
 import RejectedInternships from "./pages/faculty/RejectedInternships";
+import FacultyMessages from "./pages/faculty/Messages";
 
 const queryClient = new QueryClient();
 
@@ -74,6 +75,7 @@ const App = () => (
           <Route path="/faculty/pending" element={<PendingReviews />} />
           <Route path="/faculty/approved" element={<ApprovedInternships />} />
           <Route path="/faculty/rejected" element={<RejectedInternships />} />
+          <Route path="/faculty/messages" element={<FacultyMessages />} />
           
           {/* 404 Route */}
           <Route path="*" element={<NotFound />} />
