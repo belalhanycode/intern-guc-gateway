@@ -154,9 +154,9 @@ const InternshipListings = () => {
     const matchesIndustry = industryFilter === "all" || internship.industry === industryFilter;
     
     const matchesDuration = durationFilter === "all" || (
-      durationFilter === "short" && parseInt(internship.duration) <= 2 ||
-      durationFilter === "medium" && parseInt(internship.duration) === 3 ||
-      durationFilter === "long" && parseInt(internship.duration) > 3
+      (durationFilter === "short" && parseInt(internship.duration) <= 2) ||
+      (durationFilter === "medium" && parseInt(internship.duration) === 3) ||
+      (durationFilter === "long" && parseInt(internship.duration) > 3)
     );
     
     const matchesPaid = paidFilter === "all" || 
@@ -218,7 +218,7 @@ const InternshipListings = () => {
                     <SelectItem value="all">All Durations</SelectItem>
                     <SelectItem value="short">Short (≤ 2 months)</SelectItem>
                     <SelectItem value="medium">Medium (3 months)</SelectItem>
-                    <SelectItem value="long">Long (> 3 months)</SelectItem>
+                    <SelectItem value="long">Long ({`>`} 3 months)</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

@@ -40,6 +40,10 @@ import FacultyMessages from "./pages/faculty/Messages";
 import CompanyRegister from "./pages/company/Register";
 import CompanyDashboard from "./pages/company/Dashboard";
 import CreateJob from "./pages/company/CreateJob";
+import CompanyInternships from "./pages/company/Internships";
+import CompanyApplications from "./pages/company/Applications";
+import CompanyInterns from "./pages/company/Interns";
+import CompanyEvaluations from "./pages/company/Evaluations";
 
 const queryClient = new QueryClient();
 
@@ -88,6 +92,10 @@ const App = () => (
           {/* Company Routes */}
           <Route path="/company" element={<CompanyDashboard />} />
           <Route path="/company/create-job" element={<CreateJob />} />
+          <Route path="/company/internships" element={<CompanyInternships />} />
+          <Route path="/company/applications" element={<CompanyApplications />} />
+          <Route path="/company/interns" element={<CompanyInterns />} />
+          <Route path="/company/evaluations" element={<CompanyEvaluations />} />
           
           {/* 404 Route */}
           <Route path="*" element={<NotFound />} />
