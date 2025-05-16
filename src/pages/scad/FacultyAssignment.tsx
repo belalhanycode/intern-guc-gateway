@@ -99,12 +99,12 @@ const FacultyAssignment = () => {
                       onChange={(e) => setSearchQuery(e.target.value)}
                     />
                   </div>
-                  <Select value={departmentFilter || ""} onValueChange={(value) => setDepartmentFilter(value || null)}>
+                  <Select value={departmentFilter || undefined} onValueChange={(value) => setDepartmentFilter(value || null)}>
                     <SelectTrigger className="w-[180px]">
                       <SelectValue placeholder="Filter by department" />
                     </SelectTrigger>
                     <SelectContent>
-                      <SelectItem value="">All Departments</SelectItem>
+                      <SelectItem value="all">All Departments</SelectItem>
                       <SelectItem value="Computer Science">Computer Science</SelectItem>
                       <SelectItem value="Engineering">Engineering</SelectItem>
                       <SelectItem value="Business Informatics">Business Informatics</SelectItem>

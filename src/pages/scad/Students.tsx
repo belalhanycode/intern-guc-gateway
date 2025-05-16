@@ -155,24 +155,24 @@ const Students = () => {
                   />
                 </div>
                 
-                <Select value={majorFilter || ""} onValueChange={(value) => setMajorFilter(value || null)}>
+                <Select value={majorFilter || undefined} onValueChange={(value) => setMajorFilter(value || null)}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Filter by major" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Majors</SelectItem>
+                    <SelectItem value="all">All Majors</SelectItem>
                     <SelectItem value="Computer Science">Computer Science</SelectItem>
                     <SelectItem value="Engineering">Engineering</SelectItem>
                     <SelectItem value="Business Informatics">Business Informatics</SelectItem>
                   </SelectContent>
                 </Select>
                 
-                <Select value={statusFilter || ""} onValueChange={(value) => setStatusFilter(value || null)}>
+                <Select value={statusFilter || undefined} onValueChange={(value) => setStatusFilter(value || null)}>
                   <SelectTrigger className="w-[180px]">
                     <SelectValue placeholder="Filter by status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Statuses</SelectItem>
+                    <SelectItem value="all">All Statuses</SelectItem>
                     <SelectItem value="Completed">Completed</SelectItem>
                     <SelectItem value="In Progress">In Progress</SelectItem>
                     <SelectItem value="Not Started">Not Started</SelectItem>
