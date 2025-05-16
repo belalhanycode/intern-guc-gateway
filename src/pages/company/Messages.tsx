@@ -1,7 +1,7 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
-import FacultySidebar from "@/components/navigation/FacultySidebar";
+import CompanySidebar from "@/components/navigation/CompanySidebar";
 import {
   Card,
   CardContent,
@@ -13,49 +13,42 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Search } from "lucide-react";
 
 interface Message {
   id: string;
   sender: string;
-  senderType: "student" | "scad" | "company" | "faculty";
+  senderType: "student" | "scad" | "faculty" | "company";
   content: string;
   timestamp: Date;
   read: boolean;
 }
 
-const FacultyMessages = () => {
-  const [messages, setMessages] = useState<Message[]>([
+const CompanyMessages = () => {
+  const [messages] = useState<Message[]>([
     {
       id: "1",
-      sender: "Sarah Hassan",
-      senderType: "student",
-      content: "Hello Professor, I have a question about my internship report evaluation. Could you please clarify why it was flagged?",
-      timestamp: new Date(2025, 4, 14, 14, 30),
+      sender: "SCAD Office",
+      senderType: "scad",
+      content: "Your company registration has been approved. You can now post internship opportunities.",
+      timestamp: new Date(2025, 4, 14, 10, 30),
       read: true,
     },
     {
       id: "2",
-      sender: "SCAD Office",
-      senderType: "scad",
-      content: "We've assigned you 5 new internship reports to review. Please complete your evaluations by May 25th.",
+      sender: "Ahmed Hassan",
+      senderType: "student",
+      content: "Hello, I have a question about the Frontend Developer intern position that I applied for last week.",
       timestamp: new Date(2025, 4, 15, 9, 45),
       read: false,
     },
     {
       id: "3",
-      sender: "Omar Ahmed",
-      senderType: "student",
-      content: "Thank you for your feedback on my report. I've made the suggested changes and resubmitted it for your review.",
-      timestamp: new Date(2025, 4, 15, 11, 20),
-      read: false,
-    },
-    {
-      id: "4",
-      sender: "Microsoft Egypt",
-      senderType: "company",
+      sender: "Dr. Mohamed Adel",
+      senderType: "faculty",
       content: "We'd like to invite you to our next career day as a guest speaker. Please let us know if you're available.",
-      timestamp: new Date(2025, 4, 13, 15, 10),
-      read: true,
+      timestamp: new Date(2025, 4, 15, 14, 20),
+      read: false,
     },
   ]);
 
@@ -70,27 +63,12 @@ const FacultyMessages = () => {
 
   const handleSelectMessage = (message: Message) => {
     setSelectedMessage(message);
-    if (!message.read) {
-      setMessages(messages.map(m => 
-        m.id === message.id ? { ...m, read: true } : m
-      ));
-    }
   };
 
   const handleSendMessage = () => {
     if (newMessageContent.trim() && selectedMessage) {
-      const newMessage: Message = {
-        id: Date.now().toString(),
-        sender: "You (Faculty)",
-        senderType: "faculty", // Changed from "scad" to "faculty"
-        content: newMessageContent,
-        timestamp: new Date(),
-        read: true,
-      };
-
-      setMessages([...messages, newMessage]);
+      // In a real app, we would send the message to the server
       setNewMessageContent("");
-      // In a real app, we would also store this in a database
     }
   };
 
@@ -111,7 +89,7 @@ const FacultyMessages = () => {
 
   return (
     <DashboardLayout
-      sidebar={<FacultySidebar />}
+      sidebar={<CompanySidebar />}
       pageTitle="Messages"
     >
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-10rem)]">
@@ -119,12 +97,15 @@ const FacultyMessages = () => {
           <CardHeader className="px-4 py-3">
             <CardTitle className="text-lg">Conversations</CardTitle>
             <CardDescription>Manage your messages</CardDescription>
-            <Input 
-              placeholder="Search messages..." 
-              className="mt-2"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-            />
+            <div className="relative mt-2">
+              <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
+              <Input 
+                placeholder="Search messages..." 
+                className="pl-8"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
           </CardHeader>
           <CardContent className="overflow-y-auto flex-grow p-0">
             <div className="divide-y">
@@ -205,7 +186,7 @@ const FacultyMessages = () => {
 
               <CardContent className="p-6 overflow-y-auto flex-grow">
                 <div className="space-y-4">
-                  <div className={`flex ${selectedMessage.senderType !== "faculty" ? "justify-start" : "justify-end"}`}>
+                  <div className={`flex ${selectedMessage.senderType !== "company" ? "justify-start" : "justify-end"}`}>
                     <div className={`max-w-[80%] rounded-lg p-4 ${
                       selectedMessage.senderType === "student" 
                         ? "bg-blue-100" 
@@ -256,4 +237,4 @@ const FacultyMessages = () => {
   );
 };
 
-export default FacultyMessages;
+export default CompanyMessages;

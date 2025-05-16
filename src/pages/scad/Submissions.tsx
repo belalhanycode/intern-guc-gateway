@@ -168,12 +168,12 @@ const Submissions = () => {
                   />
                 </div>
                 
-                <Select value={statusFilter || ""} onValueChange={(value) => setStatusFilter(value || null)}>
+                <Select value={statusFilter || "all"} onValueChange={(value) => setStatusFilter(value === "all" ? null : value)}>
                   <SelectTrigger className="w-[150px]">
                     <SelectValue placeholder="Status" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Statuses</SelectItem>
+                    <SelectItem value="all">All Statuses</SelectItem>
                     <SelectItem value="pending">Pending</SelectItem>
                     <SelectItem value="approved">Approved</SelectItem>
                     <SelectItem value="rejected">Rejected</SelectItem>
@@ -181,12 +181,12 @@ const Submissions = () => {
                   </SelectContent>
                 </Select>
                 
-                <Select value={typeFilter || ""} onValueChange={(value) => setTypeFilter(value || null)}>
+                <Select value={typeFilter || "all"} onValueChange={(value) => setTypeFilter(value === "all" ? null : value)}>
                   <SelectTrigger className="w-[150px]">
                     <SelectValue placeholder="Type" />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="">All Types</SelectItem>
+                    <SelectItem value="all">All Types</SelectItem>
                     <SelectItem value="Full-time">Full-time</SelectItem>
                     <SelectItem value="Part-time">Part-time</SelectItem>
                   </SelectContent>

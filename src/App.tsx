@@ -44,6 +44,7 @@ import CompanyInternships from "./pages/company/Internships";
 import CompanyApplications from "./pages/company/Applications";
 import CompanyInterns from "./pages/company/Interns";
 import CompanyEvaluations from "./pages/company/Evaluations";
+import CompanyMessages from "./pages/company/Messages";
 
 const queryClient = new QueryClient();
 
@@ -96,6 +97,7 @@ const App = () => (
           <Route path="/company/applications" element={<CompanyApplications />} />
           <Route path="/company/interns" element={<CompanyInterns />} />
           <Route path="/company/evaluations" element={<CompanyEvaluations />} />
+          <Route path="/company/messages" element={<CompanyMessages />} />
           
           {/* 404 Route */}
           <Route path="*" element={<NotFound />} />
