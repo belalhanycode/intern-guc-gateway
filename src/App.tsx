@@ -18,6 +18,7 @@ import Messages from "./pages/student/Messages";
 import History from "./pages/student/History";
 import CareerGuidance from "./pages/student/CareerGuidance";
 import Workshops from "./pages/student/Workshops";
+import InternshipListings from "./pages/student/InternshipListings";
 
 // SCAD
 import ScadDashboard from "./pages/scad/Dashboard";
@@ -35,6 +36,11 @@ import ApprovedInternships from "./pages/faculty/ApprovedInternships";
 import RejectedInternships from "./pages/faculty/RejectedInternships";
 import FacultyMessages from "./pages/faculty/Messages";
 
+// Company
+import CompanyRegister from "./pages/company/Register";
+import CompanyDashboard from "./pages/company/Dashboard";
+import CreateJob from "./pages/company/CreateJob";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -49,6 +55,7 @@ const App = () => (
           
           {/* Authentication */}
           <Route path="/login" element={<Login />} />
+          <Route path="/company/register" element={<CompanyRegister />} />
           
           {/* Student Routes */}
           <Route path="/student" element={<StudentDashboard />} />
@@ -59,6 +66,7 @@ const App = () => (
           <Route path="/student/assessments" element={<Assessments />} />
           <Route path="/student/career-guidance" element={<CareerGuidance />} />
           <Route path="/student/workshops" element={<Workshops />} />
+          <Route path="/student/internships" element={<InternshipListings />} />
           
           {/* SCAD Routes */}
           <Route path="/scad" element={<ScadDashboard />} />
@@ -76,6 +84,10 @@ const App = () => (
           <Route path="/faculty/approved" element={<ApprovedInternships />} />
           <Route path="/faculty/rejected" element={<RejectedInternships />} />
           <Route path="/faculty/messages" element={<FacultyMessages />} />
+          
+          {/* Company Routes */}
+          <Route path="/company" element={<CompanyDashboard />} />
+          <Route path="/company/create-job" element={<CreateJob />} />
           
           {/* 404 Route */}
           <Route path="*" element={<NotFound />} />

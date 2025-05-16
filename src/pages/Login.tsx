@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import AuthLayout from "@/components/layouts/AuthLayout";
 import { Button } from "@/components/ui/button";
 import {
@@ -48,6 +48,9 @@ const Login = () => {
       case "faculty":
         navigate("/faculty");
         break;
+      case "company":
+        navigate("/company");
+        break;
       default:
         navigate("/student");
     }
@@ -69,6 +72,7 @@ const Login = () => {
                 <SelectItem value="student">Student</SelectItem>
                 <SelectItem value="faculty">Faculty</SelectItem>
                 <SelectItem value="scad">SCAD Admin</SelectItem>
+                <SelectItem value="company">Company</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -105,6 +109,15 @@ const Login = () => {
           <Button type="submit" className="w-full">
             Sign In
           </Button>
+          
+          <div className="text-center mt-4">
+            <p className="text-sm text-gray-600">
+              Are you a company looking to hire interns?{" "}
+              <Link to="/company/register" className="text-blue-600 hover:underline">
+                Register here
+              </Link>
+            </p>
+          </div>
         </div>
       </form>
     </AuthLayout>

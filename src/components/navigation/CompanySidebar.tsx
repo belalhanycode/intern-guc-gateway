@@ -2,67 +2,55 @@
 import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { 
-  Home, 
+  Briefcase, 
+  Users, 
   FileText, 
-  CheckSquare, 
-  ClockIcon, 
-  MessageSquare,
-  BookOpen,
-  Award,
-  Calendar,
-  Briefcase
+  MessageCircle,
+  ClipboardList,
+  Star,
+  Plus
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const StudentSidebar = () => {
+const CompanySidebar = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
   const navItems = [
     {
       title: "Dashboard",
-      icon: <Home size={18} />,
-      path: "/student",
-    },
-    {
-      title: "Internship Listings",
       icon: <Briefcase size={18} />,
-      path: "/student/internships",
+      path: "/company",
     },
     {
-      title: "Submit Internship",
+      title: "My Internships",
+      icon: <ClipboardList size={18} />,
+      path: "/company/internships",
+    },
+    {
+      title: "Create Job Post",
+      icon: <Plus size={18} />,
+      path: "/company/create-job",
+    },
+    {
+      title: "Applications",
       icon: <FileText size={18} />,
-      path: "/student/submission",
+      path: "/company/applications",
     },
     {
-      title: "Submission Status",
-      icon: <CheckSquare size={18} />,
-      path: "/student/status",
+      title: "Current Interns",
+      icon: <Users size={18} />,
+      path: "/company/interns",
     },
     {
-      title: "History",
-      icon: <ClockIcon size={18} />,
-      path: "/student/history",
-    },
-    {
-      title: "Assessments",
-      icon: <Award size={18} />,
-      path: "/student/assessments",
-    },
-    {
-      title: "Career Guidance",
-      icon: <BookOpen size={18} />,
-      path: "/student/career-guidance",
-    },
-    {
-      title: "Workshops",
-      icon: <Calendar size={18} />,
-      path: "/student/workshops",
+      title: "Evaluations",
+      icon: <Star size={18} />,
+      path: "/company/evaluations",
     },
     {
       title: "Messages",
-      icon: <MessageSquare size={18} />,
-      path: "/student/messages",
+      icon: <MessageCircle size={18} />,
+      path: "/company/messages",
     },
   ];
 
@@ -92,4 +80,4 @@ const StudentSidebar = () => {
   );
 };
 
-export default StudentSidebar;
+export default CompanySidebar;

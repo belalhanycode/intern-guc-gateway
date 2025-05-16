@@ -1,345 +1,251 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import FacultySidebar from "@/components/navigation/FacultySidebar";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { 
-  Search, 
-  Send, 
-  Clock, 
-  Info, 
-  Paperclip,
-  MessageSquare
-} from "lucide-react";
-import { Badge } from "@/components/ui/badge";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { toast } from "sonner";
 
-// Sample message data for faculty
-const sampleConversations = [
-  {
-    id: 1,
-    name: "SCAD Office",
-    avatar: "SCAD",
-    unread: 2,
-    lastMessage: "New internship submissions require your review.",
-    time: "10:45 AM",
-    isActive: true,
-    messages: [
-      {
-        id: 1,
-        sender: "SCAD Office",
-        text: "Hello Dr. Khalid! We have assigned several new internship submissions for your review.",
-        time: "10:43 AM",
-        isUser: false
-      },
-      {
-        id: 2,
-        sender: "SCAD Office",
-        text: "Please prioritize the flagged submissions as students are waiting for feedback.",
-        time: "10:45 AM",
-        isUser: false
-      }
-    ]
-  },
-  {
-    id: 2,
-    name: "Ahmed Mohamed",
-    avatar: "AM",
-    unread: 0,
-    lastMessage: "Thank you for reviewing my internship report.",
-    time: "Yesterday",
-    isActive: false,
-    messages: [
-      {
-        id: 1,
-        sender: "Ahmed Mohamed",
-        text: "Hello Dr., I've revised my internship report based on your feedback. Could you please review it when you have time?",
-        time: "Yesterday, 2:30 PM",
-        isUser: false
-      },
-      {
-        id: 2,
-        sender: "You",
-        text: "I'll look at it today and get back to you.",
-        time: "Yesterday, 3:15 PM",
-        isUser: true
-      },
-      {
-        id: 3,
-        sender: "Ahmed Mohamed",
-        text: "Thank you for reviewing my internship report.",
-        time: "Yesterday, 5:45 PM",
-        isUser: false
-      }
-    ]
-  },
-  {
-    id: 3,
-    name: "Sarah Ali",
-    avatar: "SA",
-    unread: 1,
-    lastMessage: "Can you explain why my internship report was flagged?",
-    time: "Monday",
-    isActive: true,
-    messages: [
-      {
-        id: 1,
-        sender: "Sarah Ali",
-        text: "Good morning Dr., I noticed that my internship report was flagged. Could you please explain what I need to improve?",
-        time: "Monday, 11:20 AM",
-        isUser: false
-      },
-      {
-        id: 2,
-        sender: "You",
-        text: "Hello Sarah, your report needs more details about the technical aspects of your work and how they relate to your coursework.",
-        time: "Monday, 11:45 AM",
-        isUser: true
-      },
-      {
-        id: 3,
-        sender: "Sarah Ali",
-        text: "Can you explain why my internship report was flagged?",
-        time: "Today, 9:15 AM",
-        isUser: false
-      }
-    ]
-  },
-  {
-    id: 4,
-    name: "Mahmoud Khaled",
-    avatar: "MK",
-    unread: 0,
-    lastMessage: "I have resubmitted my evaluation form with the company stamp.",
-    time: "Last week",
-    isActive: false,
-    messages: [
-      {
-        id: 1,
-        sender: "Mahmoud Khaled",
-        text: "Dear professor, I have resubmitted my evaluation form with the company stamp as requested.",
-        time: "Last week",
-        isUser: false
-      },
-      {
-        id: 2,
-        sender: "You",
-        text: "Thank you, Mahmoud. I'll review it and update your status soon.",
-        time: "Last week",
-        isUser: true
-      }
-    ]
-  }
-];
+interface Message {
+  id: string;
+  sender: string;
+  senderType: "student" | "scad" | "company";
+  content: string;
+  timestamp: Date;
+  read: boolean;
+}
 
-const Messages = () => {
-  const [conversations, setConversations] = useState(sampleConversations);
-  const [selectedConversation, setSelectedConversation] = useState(sampleConversations[0]);
-  const [newMessage, setNewMessage] = useState("");
+const FacultyMessages = () => {
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: "1",
+      sender: "Sarah Hassan",
+      senderType: "student",
+      content: "Hello Professor, I have a question about my internship report evaluation. Could you please clarify why it was flagged?",
+      timestamp: new Date(2025, 4, 14, 14, 30),
+      read: true,
+    },
+    {
+      id: "2",
+      sender: "SCAD Office",
+      senderType: "scad",
+      content: "We've assigned you 5 new internship reports to review. Please complete your evaluations by May 25th.",
+      timestamp: new Date(2025, 4, 15, 9, 45),
+      read: false,
+    },
+    {
+      id: "3",
+      sender: "Omar Ahmed",
+      senderType: "student",
+      content: "Thank you for your feedback on my report. I've made the suggested changes and resubmitted it for your review.",
+      timestamp: new Date(2025, 4, 15, 11, 20),
+      read: false,
+    },
+    {
+      id: "4",
+      sender: "Microsoft Egypt",
+      senderType: "company",
+      content: "We'd like to invite you to our next career day as a guest speaker. Please let us know if you're available.",
+      timestamp: new Date(2025, 4, 13, 15, 10),
+      read: true,
+    },
+  ]);
+
+  const [selectedMessage, setSelectedMessage] = useState<Message | null>(null);
+  const [newMessageContent, setNewMessageContent] = useState("");
   const [searchQuery, setSearchQuery] = useState("");
 
-  // Filter conversations based on search query
-  const filteredConversations = conversations.filter(
-    (conversation) =>
-      conversation.name.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredMessages = messages.filter((message) => 
+    message.sender.toLowerCase().includes(searchQuery.toLowerCase()) || 
+    message.content.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  const handleSendMessage = () => {
-    if (newMessage.trim() === "") return;
-    
-    // Create a new message
-    const message = {
-      id: selectedConversation.messages.length + 1,
-      sender: "You",
-      text: newMessage.trim(),
-      time: "Just now",
-      isUser: true
-    };
-    
-    // Add the message to the selected conversation
-    const updatedConversations = conversations.map((convo) =>
-      convo.id === selectedConversation.id
-        ? {
-            ...convo,
-            lastMessage: message.text,
-            time: "Just now",
-            messages: [...convo.messages, message],
-          }
-        : convo
-    );
-    
-    setConversations(updatedConversations);
-    setSelectedConversation({
-      ...selectedConversation,
-      lastMessage: message.text,
-      time: "Just now",
-      messages: [...selectedConversation.messages, message],
-    });
-    
-    setNewMessage("");
-    toast.success("Message sent");
+  const handleSelectMessage = (message: Message) => {
+    setSelectedMessage(message);
+    if (!message.read) {
+      setMessages(messages.map(m => 
+        m.id === message.id ? { ...m, read: true } : m
+      ));
+    }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === "Enter" && !e.shiftKey) {
-      e.preventDefault();
-      handleSendMessage();
+  const handleSendMessage = () => {
+    if (newMessageContent.trim() && selectedMessage) {
+      const newMessage: Message = {
+        id: Date.now().toString(),
+        sender: "You (Faculty)",
+        senderType: "scad", // Using SCAD styling for faculty
+        content: newMessageContent,
+        timestamp: new Date(),
+        read: true,
+      };
+
+      setMessages([...messages, newMessage]);
+      setNewMessageContent("");
+      // In a real app, we would also store this in a database
+    }
+  };
+
+  const formatDate = (date: Date) => {
+    const today = new Date();
+    const yesterday = new Date(today);
+    yesterday.setDate(yesterday.getDate() - 1);
+    
+    if (date.toDateString() === today.toDateString()) {
+      return `Today at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    } else if (date.toDateString() === yesterday.toDateString()) {
+      return `Yesterday at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
+    } else {
+      return date.toLocaleDateString([], { day: 'numeric', month: 'short' }) + 
+             ` at ${date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}`;
     }
   };
 
   return (
-    <DashboardLayout 
+    <DashboardLayout
       sidebar={<FacultySidebar />}
       pageTitle="Messages"
     >
-      <div className="h-[calc(100vh-120px)]">
-        <Card className="h-full">
-          <div className="grid md:grid-cols-[280px_1fr] h-full">
-            {/* Conversations sidebar */}
-            <div className="border-r h-full flex flex-col">
-              <CardHeader className="p-4">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Messages</CardTitle>
-                  <Badge variant="outline" className="bg-primary/10">
-                    <MessageSquare className="h-3 w-3 mr-1" />
-                    {conversations.reduce((sum, conv) => sum + conv.unread, 0)}
-                  </Badge>
-                </div>
-                <div className="relative mt-2">
-                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-gray-500" />
-                  <Input
-                    placeholder="Search students..." 
-                    className="pl-8"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-              </CardHeader>
-              <ScrollArea className="flex-1 px-3">
-                {filteredConversations.map((conversation) => (
-                  <div 
-                    key={conversation.id}
-                    onClick={() => {
-                      // Mark as read when clicked
-                      const updatedConversations = conversations.map((c) => 
-                        c.id === conversation.id 
-                          ? { ...c, unread: 0 } 
-                          : c
-                      );
-                      setConversations(updatedConversations);
-                      setSelectedConversation({...conversation, unread: 0});
-                    }}
-                    className={`p-3 flex items-start space-x-3 rounded-md cursor-pointer mb-1 ${
-                      selectedConversation.id === conversation.id 
-                        ? "bg-gray-100" 
-                        : "hover:bg-gray-50"
-                    }`}
-                  >
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 h-[calc(100vh-10rem)]">
+        <Card className="md:col-span-1 overflow-hidden flex flex-col">
+          <CardHeader className="px-4 py-3">
+            <CardTitle className="text-lg">Conversations</CardTitle>
+            <CardDescription>Manage your messages</CardDescription>
+            <Input 
+              placeholder="Search messages..." 
+              className="mt-2"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+            />
+          </CardHeader>
+          <CardContent className="overflow-y-auto flex-grow p-0">
+            <div className="divide-y">
+              {filteredMessages.map((message) => (
+                <div
+                  key={message.id}
+                  className={`p-4 cursor-pointer hover:bg-gray-50 transition-colors ${
+                    selectedMessage?.id === message.id ? 'bg-gray-100' : ''
+                  } ${!message.read ? 'border-l-4 border-blue-500' : ''}`}
+                  onClick={() => handleSelectMessage(message)}
+                >
+                  <div className="flex items-center gap-3">
                     <Avatar>
                       <AvatarImage src="" />
-                      <AvatarFallback className={conversation.unread > 0 ? "bg-primary text-white" : "bg-muted"}>
-                        {conversation.avatar}
+                      <AvatarFallback className={
+                        message.senderType === "student" 
+                          ? "bg-blue-500" 
+                          : message.senderType === "scad" 
+                            ? "bg-purple-500" 
+                            : "bg-green-500"
+                      }>
+                        {message.sender.charAt(0)}
                       </AvatarFallback>
                     </Avatar>
                     <div className="flex-1 min-w-0">
-                      <div className="flex justify-between items-center">
-                        <span className={`${conversation.unread > 0 ? "font-medium" : ""} truncate`}>{conversation.name}</span>
-                        <span className="text-xs text-gray-500">{conversation.time}</span>
+                      <div className="flex justify-between items-baseline">
+                        <p className="font-medium text-sm truncate">{message.sender}</p>
+                        <span className="text-xs text-gray-500">
+                          {formatDate(message.timestamp)}
+                        </span>
                       </div>
-                      <p className={`text-sm truncate ${conversation.unread > 0 ? "text-gray-900 font-medium" : "text-gray-500"}`}>
-                        {conversation.lastMessage}
+                      <p className="text-sm text-gray-500 truncate">
+                        {message.content}
                       </p>
                     </div>
-                    {conversation.unread > 0 && (
-                      <Badge className="h-5 w-5 p-0 flex items-center justify-center rounded-full">
-                        {conversation.unread}
-                      </Badge>
-                    )}
                   </div>
-                ))}
-              </ScrollArea>
+                </div>
+              ))}
             </div>
-            
-            {/* Messages area */}
-            <div className="flex flex-col h-full">
-              {/* Conversation header */}
-              <div className="p-4 border-b flex justify-between items-center">
-                <div className="flex items-center space-x-3">
+          </CardContent>
+        </Card>
+
+        <Card className="md:col-span-2 flex flex-col h-full">
+          {selectedMessage ? (
+            <>
+              <CardHeader className="px-6 py-4 border-b">
+                <div className="flex items-center gap-3">
                   <Avatar>
                     <AvatarImage src="" />
-                    <AvatarFallback className="bg-muted">
-                      {selectedConversation?.avatar}
+                    <AvatarFallback className={
+                      selectedMessage.senderType === "student" 
+                        ? "bg-blue-500" 
+                        : selectedMessage.senderType === "scad" 
+                          ? "bg-purple-500" 
+                          : "bg-green-500"
+                    }>
+                      {selectedMessage.sender.charAt(0)}
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h3 className="font-medium">{selectedConversation?.name}</h3>
-                    <div className="flex items-center text-xs text-gray-500">
-                      {selectedConversation?.isActive ? (
-                        <>
-                          <span className="h-1.5 w-1.5 rounded-full bg-green-500 mr-1.5" />
-                          <span>Online</span>
-                        </>
-                      ) : (
-                        <>
-                          <Clock className="h-3 w-3 mr-1" />
-                          <span>Last active: {selectedConversation?.time}</span>
-                        </>
-                      )}
+                    <CardTitle className="text-lg">{selectedMessage.sender}</CardTitle>
+                    <CardDescription>
+                      {selectedMessage.senderType === "student" 
+                        ? "Student" 
+                        : selectedMessage.senderType === "scad" 
+                          ? "SCAD Office" 
+                          : "Company Representative"}
+                    </CardDescription>
+                  </div>
+                </div>
+              </CardHeader>
+
+              <CardContent className="p-6 overflow-y-auto flex-grow">
+                <div className="space-y-4">
+                  <div className={`flex ${selectedMessage.senderType !== "faculty" ? "justify-start" : "justify-end"}`}>
+                    <div className={`max-w-[80%] rounded-lg p-4 ${
+                      selectedMessage.senderType === "student" 
+                        ? "bg-blue-100" 
+                        : selectedMessage.senderType === "scad" 
+                          ? "bg-purple-100" 
+                          : "bg-green-100"
+                    }`}>
+                      <p className="text-sm">{selectedMessage.content}</p>
+                      <span className="block text-xs text-gray-500 mt-1">
+                        {formatDate(selectedMessage.timestamp)}
+                      </span>
                     </div>
                   </div>
                 </div>
-                <Button variant="ghost" size="icon">
-                  <Info className="h-4 w-4" />
-                </Button>
-              </div>
-              
-              {/* Messages */}
-              <ScrollArea className="flex-1 p-4">
-                <div className="space-y-4">
-                  {selectedConversation?.messages.map((message) => (
-                    <div key={message.id} className={`flex ${message.isUser ? "justify-end" : "justify-start"}`}>
-                      <div className={`max-w-[80%] ${message.isUser ? "bg-primary text-primary-foreground" : "bg-gray-100"} rounded-lg px-4 py-2`}>
-                        <div className="flex justify-between items-center mb-1">
-                          <span className="text-xs font-medium">{message.sender}</span>
-                          <span className="text-xs opacity-70">{message.time}</span>
-                        </div>
-                        <p>{message.text}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </ScrollArea>
-              
-              {/* Message input */}
-              <div className="p-4 border-t">
-                <div className="flex space-x-2">
-                  <Button variant="outline" size="icon">
-                    <Paperclip className="h-4 w-4" />
-                  </Button>
+              </CardContent>
+
+              <div className="p-4 border-t mt-auto">
+                <div className="flex gap-2">
                   <Textarea
-                    placeholder="Type your message..." 
-                    className="flex-1 min-h-[50px]"
-                    value={newMessage}
-                    onChange={(e) => setNewMessage(e.target.value)}
-                    onKeyDown={handleKeyDown}
+                    placeholder="Type your message..."
+                    className="resize-none"
+                    value={newMessageContent}
+                    onChange={(e) => setNewMessageContent(e.target.value)}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSendMessage();
+                      }
+                    }}
                   />
-                  <Button onClick={handleSendMessage}>
-                    <Send className="h-4 w-4 mr-1" />
-                    Send
-                  </Button>
+                  <Button onClick={handleSendMessage}>Send</Button>
                 </div>
+              </div>
+            </>
+          ) : (
+            <div className="flex items-center justify-center h-full">
+              <div className="text-center">
+                <h3 className="text-lg font-medium mb-1">Select a conversation</h3>
+                <p className="text-gray-500">Choose a message to view the conversation</p>
               </div>
             </div>
-          </div>
+          )}
         </Card>
       </div>
     </DashboardLayout>
   );
 };
 
-export default Messages;
+export default FacultyMessages;

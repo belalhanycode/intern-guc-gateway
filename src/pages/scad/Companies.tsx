@@ -2,427 +2,276 @@
 import { useState } from "react";
 import DashboardLayout from "@/components/layouts/DashboardLayout";
 import ScadSidebar from "@/components/navigation/ScadSidebar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { 
-  Building, 
-  Search, 
-  Plus, 
-  MapPin, 
-  Phone, 
-  Globe,
-  User,
-  Shield,
-  ShieldAlert,
-} from "lucide-react";
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
+import { 
+  Search, 
+  Filter,
+  Eye,
+  Check,
+  X
+} from "lucide-react";
 import { toast } from "sonner";
 
-// Mock data for companies
-const companiesData = [
-  {
-    id: 1,
-    name: "Microsoft Egypt",
-    location: "Cairo, Egypt",
-    website: "microsoft.com",
-    phone: "+20-2-2461-9855",
-    contactPerson: "Ahmed Mahmoud",
-    activeInterns: 5,
-    totalInterns: 48,
-    blacklisted: false,
-  },
-  {
-    id: 2,
-    name: "IBM Egypt",
-    location: "Smart Village, Giza",
-    website: "ibm.com",
-    phone: "+20-2-3535-9100",
-    contactPerson: "Nour Ibrahim",
-    activeInterns: 3,
-    totalInterns: 36,
-    blacklisted: false,
-  },
-  {
-    id: 3,
-    name: "Oracle Egypt",
-    location: "Heliopolis, Cairo",
-    website: "oracle.com",
-    phone: "+20-2-2417-0000",
-    contactPerson: "Khaled Ahmed",
-    activeInterns: 2,
-    totalInterns: 29,
-    blacklisted: false,
-  },
-  {
-    id: 4,
-    name: "Amazon Development Center",
-    location: "Maadi, Cairo",
-    website: "amazon.com",
-    phone: "+20-2-2527-1111",
-    contactPerson: "Sara Mohamed",
-    activeInterns: 4,
-    totalInterns: 22,
-    blacklisted: false,
-  },
-  {
-    id: 5,
-    name: "Tech Scammers Ltd",
-    location: "Dokki, Giza",
-    website: "techscammers.com",
-    phone: "+20-2-3336-4444",
-    contactPerson: "Omar Tarek",
-    activeInterns: 0,
-    totalInterns: 1,
-    blacklisted: true,
-  },
-];
+interface Company {
+  id: string;
+  name: string;
+  industry: string;
+  size: string;
+  status: "pending" | "approved" | "rejected";
+  applicationDate: string;
+}
 
 const Companies = () => {
-  const [companies, setCompanies] = useState(companiesData);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [showBlacklisted, setShowBlacklisted] = useState(true);
-  const [newCompanyName, setNewCompanyName] = useState("");
-  const [newCompanyLocation, setNewCompanyLocation] = useState("");
-  const [blacklistReason, setBlacklistReason] = useState("");
-  const [blacklistCompanyId, setBlacklistCompanyId] = useState<number | null>(null);
-  const [isBlacklistDialogOpen, setIsBlacklistDialogOpen] = useState(false);
-  const [isAddCompanyDialogOpen, setIsAddCompanyDialogOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [industryFilter, setIndustryFilter] = useState("all");
+  const [statusFilter, setStatusFilter] = useState("all");
 
-  // Filter companies based on search and blacklist filter
-  const filteredCompanies = companies.filter((company) => {
-    const matchesSearch =
-      company.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      company.location.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      company.contactPerson.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesBlacklistFilter = showBlacklisted || !company.blacklisted;
-    return matchesSearch && matchesBlacklistFilter;
+  // Sample data
+  const [companies, setCompanies] = useState<Company[]>([
+    {
+      id: "1",
+      name: "Acme Corporation",
+      industry: "Technology",
+      size: "large",
+      status: "pending",
+      applicationDate: "2025-05-10",
+    },
+    {
+      id: "2",
+      name: "Global Healthcare",
+      industry: "Healthcare",
+      size: "corporate",
+      status: "approved",
+      applicationDate: "2025-05-05",
+    },
+    {
+      id: "3",
+      name: "EduTech Solutions",
+      industry: "Education",
+      size: "medium",
+      status: "pending",
+      applicationDate: "2025-05-12",
+    },
+    {
+      id: "4",
+      name: "Finance Experts",
+      industry: "Finance",
+      size: "small",
+      status: "rejected",
+      applicationDate: "2025-05-01",
+    },
+    {
+      id: "5",
+      name: "Tech Innovators",
+      industry: "Technology",
+      size: "medium",
+      status: "pending",
+      applicationDate: "2025-05-14",
+    },
+    {
+      id: "6",
+      name: "Media Productions",
+      industry: "Media",
+      size: "small",
+      status: "approved",
+      applicationDate: "2025-04-28",
+    },
+  ]);
+
+  const handleApprove = (id: string) => {
+    setCompanies(
+      companies.map(company =>
+        company.id === id ? { ...company, status: "approved" } : company
+      )
+    );
+    toast.success("Company application approved");
+  };
+
+  const handleReject = (id: string) => {
+    setCompanies(
+      companies.map(company =>
+        company.id === id ? { ...company, status: "rejected" } : company
+      )
+    );
+    toast.success("Company application rejected");
+  };
+
+  const filteredCompanies = companies.filter(company => {
+    const matchesSearch = company.name.toLowerCase().includes(searchTerm.toLowerCase());
+    const matchesIndustry = industryFilter === "all" || company.industry === industryFilter;
+    const matchesStatus = statusFilter === "all" || company.status === statusFilter;
+    
+    return matchesSearch && matchesIndustry && matchesStatus;
   });
 
-  const handleAddCompany = () => {
-    if (!newCompanyName || !newCompanyLocation) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-    
-    const newCompany = {
-      id: companies.length + 1,
-      name: newCompanyName,
-      location: newCompanyLocation,
-      website: "",
-      phone: "",
-      contactPerson: "",
-      activeInterns: 0,
-      totalInterns: 0,
-      blacklisted: false,
-    };
-    
-    setCompanies([...companies, newCompany]);
-    setNewCompanyName("");
-    setNewCompanyLocation("");
-    setIsAddCompanyDialogOpen(false);
-    toast.success("Company added successfully");
-  };
-
-  const handleToggleBlacklist = (id: number) => {
-    const company = companies.find(c => c.id === id);
-    if (!company) return;
-    
-    if (company.blacklisted) {
-      // Remove from blacklist
-      setCompanies(companies.map(c => 
-        c.id === id ? { ...c, blacklisted: false } : c
-      ));
-      toast.success(`${company.name} removed from blacklist`);
-    } else {
-      // Prepare to blacklist
-      setBlacklistCompanyId(id);
-      setBlacklistReason("");
-      setIsBlacklistDialogOpen(true);
-    }
-  };
-
-  const handleConfirmBlacklist = () => {
-    if (!blacklistReason || !blacklistCompanyId) {
-      toast.error("Please provide a reason for blacklisting");
-      return;
-    }
-    
-    setCompanies(companies.map(c => 
-      c.id === blacklistCompanyId ? { ...c, blacklisted: true } : c
-    ));
-    
-    const company = companies.find(c => c.id === blacklistCompanyId);
-    if (company) {
-      toast.success(`${company.name} added to blacklist`);
-    }
-    
-    setIsBlacklistDialogOpen(false);
-    setBlacklistCompanyId(null);
-    setBlacklistReason("");
-  };
+  const industries = ["Technology", "Healthcare", "Finance", "Education", "Media", "Manufacturing"];
 
   return (
-    <DashboardLayout 
-      sidebar={<ScadSidebar />} 
+    <DashboardLayout
+      sidebar={<ScadSidebar />}
       pageTitle="Companies"
     >
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-2xl font-bold flex items-center">
-              Company Management
-              <Building className="ml-2 h-5 w-5 text-primary" />
-            </h2>
-            <p className="text-gray-500">
-              Manage internship companies and maintain blacklist
-            </p>
-          </div>
-          
-          <Dialog open={isAddCompanyDialogOpen} onOpenChange={setIsAddCompanyDialogOpen}>
-            <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Company
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px]">
-              <DialogHeader>
-                <DialogTitle>Add New Company</DialogTitle>
-                <DialogDescription>
-                  Enter the details of the new company to add to the system.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="grid gap-4 py-4">
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="name" className="text-right">
-                    Name*
-                  </Label>
-                  <Input
-                    id="name"
-                    className="col-span-3"
-                    value={newCompanyName}
-                    onChange={(e) => setNewCompanyName(e.target.value)}
-                  />
-                </div>
-                <div className="grid grid-cols-4 items-center gap-4">
-                  <Label htmlFor="location" className="text-right">
-                    Location*
-                  </Label>
-                  <Input
-                    id="location"
-                    className="col-span-3"
-                    value={newCompanyLocation}
-                    onChange={(e) => setNewCompanyLocation(e.target.value)}
-                  />
-                </div>
-              </div>
-              <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddCompanyDialogOpen(false)}>
-                  Cancel
-                </Button>
-                <Button onClick={handleAddCompany}>Add Company</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
-        </div>
-        
-        <Card>
-          <CardHeader>
-            <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-2 md:space-y-0">
-              <CardTitle>All Companies</CardTitle>
-              
-              <div className="flex flex-wrap gap-2">
-                <div className="relative">
-                  <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-gray-500" />
-                  <Input
-                    type="search"
-                    placeholder="Search companies..."
-                    className="pl-8 w-[250px]"
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                  />
-                </div>
-                
-                <Button 
-                  variant="outline" 
-                  onClick={() => setShowBlacklisted(!showBlacklisted)}
-                  className={!showBlacklisted ? "bg-gray-100" : ""}
-                >
-                  <Shield className="h-4 w-4 mr-2" />
-                  {showBlacklisted ? "Hide Blacklisted" : "Show Blacklisted"}
-                </Button>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Company</TableHead>
-                  <TableHead>Location</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Active Interns</TableHead>
-                  <TableHead>Total Interns</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredCompanies.map((company) => (
-                  <TableRow key={company.id} className={company.blacklisted ? "bg-red-50" : ""}>
-                    <TableCell className="font-medium">
-                      <div className="flex items-center">
-                        <Building className="h-4 w-4 text-gray-500 mr-2" />
-                        {company.name}
-                      </div>
-                      {company.website && (
-                        <div className="text-xs text-gray-500 flex items-center mt-1">
-                          <Globe className="h-3 w-3 mr-1" />
-                          {company.website}
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center text-gray-600">
-                        <MapPin className="h-4 w-4 mr-1 text-gray-500" />
-                        {company.location}
-                      </div>
-                    </TableCell>
-                    <TableCell>
-                      {company.contactPerson && (
-                        <div className="text-sm flex items-center">
-                          <User className="h-3 w-3 mr-1 text-gray-500" />
-                          {company.contactPerson}
-                        </div>
-                      )}
-                      {company.phone && (
-                        <div className="text-xs text-gray-500 flex items-center mt-1">
-                          <Phone className="h-3 w-3 mr-1" />
-                          {company.phone}
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell>{company.activeInterns}</TableCell>
-                    <TableCell>{company.totalInterns}</TableCell>
-                    <TableCell>
-                      {company.blacklisted ? (
-                        <Badge variant="outline" className="bg-red-100 text-red-800 border-red-200 hover:bg-red-100">
-                          <ShieldAlert className="h-3 w-3 mr-1" />
-                          Blacklisted
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline" className="bg-green-100 text-green-800 border-green-200 hover:bg-green-100">
-                          Approved
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <Button
-                        variant={company.blacklisted ? "outline" : "ghost"}
-                        size="sm"
-                        className={company.blacklisted ? "text-green-600 hover:text-green-700" : "text-red-600 hover:text-red-700"}
-                        onClick={() => handleToggleBlacklist(company.id)}
-                      >
-                        {company.blacklisted ? "Unblacklist" : "Blacklist"}
-                      </Button>
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
-        
-        <Dialog open={isBlacklistDialogOpen} onOpenChange={setIsBlacklistDialogOpen}>
-          <DialogContent>
-            <DialogHeader>
-              <DialogTitle>Blacklist Company</DialogTitle>
-              <DialogDescription>
-                Please provide a reason for blacklisting this company. This information will be stored for future reference.
-              </DialogDescription>
-            </DialogHeader>
-            <div className="py-4">
-              <Label htmlFor="reason" className="text-sm font-medium">
-                Reason for Blacklisting
-              </Label>
-              <Textarea
-                id="reason"
-                placeholder="Enter detailed reason for blacklisting..."
-                value={blacklistReason}
-                onChange={(e) => setBlacklistReason(e.target.value)}
-                className="mt-1.5"
+      <Card>
+        <CardHeader>
+          <CardTitle>Company Applications</CardTitle>
+          <CardDescription>
+            Review and manage company applications to join the SCAD system
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="flex flex-col md:flex-row gap-4 mb-6">
+            <div className="flex-1 relative">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" size={18} />
+              <Input
+                placeholder="Search by company name..."
+                className="pl-10"
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setIsBlacklistDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button variant="destructive" onClick={handleConfirmBlacklist}>
-                Confirm Blacklist
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-
-        <Card className="border-red-200 bg-red-50">
-          <CardHeader>
-            <CardTitle className="text-lg text-red-800 flex items-center">
-              <ShieldAlert className="h-5 w-5 text-red-600 mr-2" />
-              Blacklisted Companies
-            </CardTitle>
-            <CardDescription className="text-red-700">
-              Companies on this list have violated internship policies or provided 
-              inadequate learning experiences. Students cannot submit internships from these companies.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-2">
-              {companies.filter(c => c.blacklisted).map((company) => (
-                <div 
-                  key={company.id} 
-                  className="flex justify-between items-center p-3 bg-white rounded-md border border-red-200"
-                >
-                  <div>
-                    <p className="font-medium">{company.name}</p>
-                    <p className="text-sm text-gray-500">{company.location}</p>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-green-600 hover:text-green-700"
-                    onClick={() => handleToggleBlacklist(company.id)}
-                  >
-                    Remove from Blacklist
-                  </Button>
-                </div>
-              ))}
-              {companies.filter(c => c.blacklisted).length === 0 && (
-                <p className="text-center text-gray-500 py-4">No companies are currently blacklisted</p>
-              )}
+            <div className="flex gap-2">
+              <div className="w-48">
+                <Select value={industryFilter} onValueChange={setIndustryFilter}>
+                  <SelectTrigger>
+                    <Filter size={16} className="mr-2" />
+                    <span>{industryFilter === "all" ? "All Industries" : industryFilter}</span>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Industries</SelectItem>
+                    {industries.map(industry => (
+                      <SelectItem key={industry} value={industry}>{industry}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="w-48">
+                <Select value={statusFilter} onValueChange={setStatusFilter}>
+                  <SelectTrigger>
+                    <Filter size={16} className="mr-2" />
+                    <span>
+                      {statusFilter === "all" 
+                        ? "All Statuses" 
+                        : statusFilter.charAt(0).toUpperCase() + statusFilter.slice(1)}
+                    </span>
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="all">All Statuses</SelectItem>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="approved">Approved</SelectItem>
+                    <SelectItem value="rejected">Rejected</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
+          </div>
+
+          <div className="rounded-md border">
+            <table className="min-w-full divide-y divide-gray-200">
+              <thead className="bg-gray-50">
+                <tr>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Company Name
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Industry
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Size
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Status
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Application Date
+                  </th>
+                  <th scope="col" className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                    Actions
+                  </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200">
+                {filteredCompanies.map((company) => (
+                  <tr key={company.id}>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <div className="font-medium">{company.name}</div>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {company.industry}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <span className="capitalize">{company.size}</span>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      <Badge variant={
+                        company.status === "approved" 
+                          ? "default" 
+                          : company.status === "rejected" 
+                            ? "destructive" 
+                            : "secondary"
+                      }>
+                        {company.status.charAt(0).toUpperCase() + company.status.slice(1)}
+                      </Badge>
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap">
+                      {new Date(company.applicationDate).toLocaleDateString()}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
+                      <div className="flex justify-end gap-2">
+                        <Button variant="ghost" size="icon">
+                          <Eye size={16} />
+                        </Button>
+                        {company.status === "pending" && (
+                          <>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="text-green-600 hover:text-green-700 hover:bg-green-50"
+                              onClick={() => handleApprove(company.id)}
+                            >
+                              <Check size={16} />
+                            </Button>
+                            <Button 
+                              variant="ghost" 
+                              size="icon" 
+                              className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                              onClick={() => handleReject(company.id)}
+                            >
+                              <X size={16} />
+                            </Button>
+                          </>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {filteredCompanies.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-6 py-10 text-center text-gray-500">
+                      No companies found matching the current filters
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </CardContent>
+      </Card>
     </DashboardLayout>
   );
 };
